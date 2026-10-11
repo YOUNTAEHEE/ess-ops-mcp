@@ -7,10 +7,12 @@
 | 구분 | 실행 위치 | 데이터와 기록 |
 | --- | --- | --- |
 | GitHub Pages | 브라우저 React 시연 | 모의 데이터, 현재 탭의 메모리 기록. 새로고침 시 초기화 |
-| Oracle용 MCP 서버 | Node.js / Docker / Caddy HTTPS | Bearer 인증, SQLite 영구 기록. 계정 생성 및 실제 배포 대기 |
+| Oracle용 MCP 서버 | Node.js / Docker / Caddy HTTPS | Bearer 인증, SQLite 영구 기록을 로컬 검증. 가입 완료, 무료 VM 용량 부족으로 실제 배포 대기 |
 | 초기 Sites 버전 | Cloudflare Workers / D1 | 개인 접근으로 배포 검증. Oracle 배포와 구분 |
 
 GitHub Pages는 원격 MCP 서버를 실행하지 않습니다. Oracle VM 생성·HTTPS 주소·실제 Codex 연결 검증을 마치기 전까지 원격 배포 완료로 표시하지 않습니다.
+
+2026-10-11 Singapore 홈 리전 AD-1에서 A1 Flex(1 OCPU·2 GB)와 E2.1 Micro(1 GB)를 각각 생성 요청했으며, 두 요청 모두 `Out of capacity`로 거절됐습니다. 실제 Oracle VM과 공개 MCP 주소는 아직 없습니다. 재개 설정과 검증 절차는 [Oracle 배포 안내](server/DEPLOYMENT.md)에 기록했습니다.
 
 ## 범위
 

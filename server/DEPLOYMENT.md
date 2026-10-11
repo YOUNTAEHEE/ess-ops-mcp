@@ -1,6 +1,19 @@
 # Oracle Cloud 배포
 
-현재 상태: Oracle 계정 가입 완료 확인 전. 서버를 아직 생성하거나 배포하지 않았습니다. 아래 구성과 HTTP 테스트를 준비했습니다.
+현재 상태 (2026-10-11): Oracle 계정 가입·로그인 완료. Singapore 홈 리전 AD-1에서 무료 VM 생성 요청 두 건이 아래와 같이 거절됐습니다. 서버를 아직 생성하거나 배포하지 않았습니다. Node 서버의 Docker 실행·인증·SQLite 기록 유지 검증은 로컬에서 완료했습니다.
+
+| 생성 요청 | 구성 | 실제 결과 |
+| --- | --- | --- |
+| VM.Standard.A1.Flex | Ubuntu 24.04 Minimal ARM64, 1 OCPU·2 GB, 기본 부트 디스크 | Out of capacity |
+| VM.Standard.E2.1.Micro | Ubuntu 24.04 Minimal x86_64, 1 GB, 기본 부트 디스크 | Out of capacity |
+
+서버 이름 `ess-ops-mcp-demo`, VCN `ess-ops-mcp-vcn`, 공개 서브넷 `ess-ops-mcp-public` / `10.0.0.0/24`를 준비했습니다. SSH 공개 키는 로컬 보관한 키의 공개 부분만 사용합니다. 개인 키·접속 토큰·작업자 IP는 이 저장소에 넣지 않습니다. 실패 뒤 인스턴스 목록에 생성된 VM이 없는 것을 확인했습니다.
+
+## 용량 확보 후 재개
+
+이 계정의 Singapore 홈 리전에는 AD-1만 표시됐습니다. 별도 fault domain을 지정하지 않은 상태에서 두 무료 shape 모두 용량 부족이었습니다. 같은 요청을 즉시 반복하지 않고 용량이 확보된 뒤 먼저 A1 1 OCPU·2 GB로 다시 시도합니다. [Oracle 공식 안내](https://docs.oracle.com/en-us/iaas/Content/FreeTier/freetier_topic-Always_Free_Resources.htm)는 이 오류를 홈 리전의 무료 shape 일시 부족으로 설명합니다. 다른 리전은 홈 리전 상시 무료 조건을 충족하지 않으므로 무료 대안으로 가정하지 않습니다.
+
+실제 VM 생성에 성공하면 인터넷에 연결하기 전에 SSH 22의 소스를 작업자 공인 IPv4 `/32`로 제한하고 HTTP 80·HTTPS 443만 공개합니다. 승인된 무료 범위를 벗어나는 유료 VM·계정 전환은 별도 예산 결정이 필요합니다. 용량 부족을 해결하려고 자동 유료 전환하지 않습니다.
 
 ## 구성
 
