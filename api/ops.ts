@@ -1,4 +1,4 @@
-import {BlobAuditStore} from '../server/blob-audit';
+import {BlobAuditStore} from '../server/blob-audit.ts';
 import {createVercelHandler} from '../server/vercel.mts';
 
 const handler=createVercelHandler({token:process.env.MCP_API_TOKEN??'',store:new BlobAuditStore(),auditConfigured:!!process.env.BLOB_STORE_ID||!!process.env.BLOB_READ_WRITE_TOKEN,allowedOrigins:(process.env.ALLOWED_ORIGINS??'').split(',').filter(Boolean)});
