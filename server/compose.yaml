@@ -1,0 +1,36 @@
+services:
+  mcp:
+    build:
+      context: ..
+      dockerfile: server/Dockerfile
+    restart: unless-stopped
+    environment:
+      MCP_API_TOKEN: ${MCP_API_TOKEN:?Set a private MCP_API_TOKEN}
+      ALLOWED_ORIGINS: https://yountaehee.github.io
+    volumes:
+      - audit-data:/app/data
+    expose:
+      - "3000"
+    mem_limit: 256m
+    cpus: 0.5
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    environment:
+      MCP_DOMAIN: ${MCP_DOMAIN:?Set your HTTPS domain}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+volumes:
+  audit-data:
+  caddy-data:
+  caddy-config:
