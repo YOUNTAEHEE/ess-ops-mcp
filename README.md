@@ -2,16 +2,16 @@
 
 2026-10-11에 새로 만든 개인 포트폴리오 데모입니다. 설비 운영 화면 경험을 바탕으로 모의 ESS 데이터의 조회를 MCP 도구로 노출합니다. 실제 회사 코드·고객 정보·설비 데이터는 포함하지 않습니다.
 
-**[GitHub Pages 시연](https://yountaehee.github.io/ess-ops-mcp/)** · **[Vercel 배포 안내](server/VERCEL.md)** · **[Oracle 배포 안내](server/DEPLOYMENT.md)**
+**[공개 시연 · Vercel](https://ess-ops-mcp.vercel.app)** · **[GitHub Pages](https://yountaehee.github.io/ess-ops-mcp/)** · **[Vercel 배포 안내](server/VERCEL.md)** · **[Oracle 배포 안내](server/DEPLOYMENT.md)**
 
 | 구분 | 실행 위치 | 데이터와 기록 |
 | --- | --- | --- |
 | GitHub Pages | 브라우저 React 시연 | 모의 데이터, 현재 탭의 메모리 기록. 새로고침 시 초기화 |
-| Vercel용 MCP 서버 | Node.js 24 Functions / private Blob | Hobby 무료 구성, Bearer 인증, 공개 모의 HTTP 미리보기. 로컬 검증 완료, 원격 배포 준비 |
+| Vercel MCP 서버 | Node.js 24 Functions / private Blob | Hobby 무료 배포 완료. Bearer 인증, 공개 모의 HTTP 미리보기, 실제 MCP SDK 호출·외부 기록 재조회 검증 |
 | Oracle용 MCP 서버 | Node.js / Docker / Caddy HTTPS | Bearer 인증, SQLite 영구 기록을 로컬 검증. 가입 완료, 무료 VM 용량 부족으로 실제 배포 대기 |
 | 초기 Sites 버전 | Cloudflare Workers / D1 | 개인 접근으로 배포 검증. Oracle 배포와 구분 |
 
-GitHub Pages는 브라우저에서 모의 데이터를 실행하는 시연 화면입니다. Oracle용 서버의 환경 구성·검증 절차·배포 진행 상태는 [Oracle 배포 안내](server/DEPLOYMENT.md)에 정리했습니다.
+Vercel 시연 화면은 서버의 모의 조회 API를 호출합니다. MCP 주소는 `https://ess-ops-mcp.vercel.app/mcp`이며, 도구 실행과 저장 기록 조회에는 비공개 Bearer 토큰이 필요합니다. GitHub Pages는 브라우저에서 같은 모의 데이터를 실행합니다. Oracle용 서버의 환경 구성·검증 절차·배포 진행 상태는 [Oracle 배포 안내](server/DEPLOYMENT.md)에 정리했습니다.
 
 ## 범위
 
@@ -20,7 +20,7 @@ GitHub Pages는 브라우저에서 모의 데이터를 실행하는 시연 화�
 - 조회 도구 6개. 도구별 엄격한 입력 검증, 데이터 호출에 사용자 인증 필요
 - 모의 공급자: 정상 / timeout / offline / 첫 실패 후 재시도 복구. 시도 2회, 일부 실패 시 성공 데이터 유지, 진행 중 동일 요청 공유
 - React 대시보드, 사업장 선택, 장비별 차트, 근거 설명, CSV 다운로드, MCP 요청 실행
-- D1 요청 기록: 요청 ID·시각·도구·처리 결과·응답 시간. 최신 30건 조회. 개인 정보·프롬프트·인증 토큰은 기록하지 않음
+- 인증된 MCP 요청 기록: 요청 ID·시각·도구·처리 결과·응답 시간. Vercel private Blob에 저장하고 최신 30건 조회. 개인 정보·프롬프트·인증 토큰은 기록하지 않음
 
 ## 제작 도구
 
@@ -50,9 +50,11 @@ D1 스키마는 `db/schema.ts`, 초기 마이그레이션은 `drizzle/0000_misty
 
 자동 테스트 15개: 핵심 도구 7개 + HTTP 서버 4개 + Vercel 함수 4개입니다. lifecycle/discovery, 인증 거절, 정상·부분 실패·복구, 중복 요청 공유, 시계열 순서·입력 범위, 알람 근거, 프로토콜 오류, HTTP 인증·Origin·본문 크기·요청 제한·SQLite 재시작 영속성을 확인합니다. Vercel 함수는 공개 미리보기와 비공개 MCP 기록의 접근 경계, 새 함수 인스턴스의 외부 저장소 조회, 저장 실패 표시를 추가 검증합니다. 테스트·TypeScript 검사·프론트엔드 빌드를 배포 전에 실행합니다.
 
+2026-10-11 Vercel Production에서 공식 MCP SDK의 Streamable HTTP 클라이언트로 조회 도구 6개와 timeout·재시도 복구를 포함한 8회 호출을 검증했습니다. 정상 4대·부분 실패 성공 3대·복구 2회 시도, 인증 없는 도구 실행·기록 조회의 HTTP 401, private Blob 저장 기록의 반복 조회 일치를 확인했습니다.
+
 초기 Cloudflare 서버는 실제 Codex에서 조회 도구 6개 호출을 확인했습니다. Oracle용 서버는 로컬 Docker 환경에서 실행·인증·SQLite 기록 유지를 검증했습니다.
 
-장애 재현: timeout 선택 → 성공 3대/실패 1대 → 실패 값은 `null` → 정상/복구 선택 → 장비 4대 복원 → 요청 기록 확인. 기록 저장 실패는 화면에 표시합니다.
+장애 재현: timeout 선택 → 성공 3대/실패 1대 → 실패 값은 `null` → 정상/복구 선택 → 장비 4대 복원 → 현재 탭 요청 기록 확인. 비공개 MCP 저장 실패는 `X-Audit-Persisted: false`로, 저장 기록 조회 실패는 HTTP 503으로 표시합니다.
 
 알람 설명은 고정 규칙에 근거하며, 재시도와 타임아웃은 모의 공급자로 재현합니다. 구현 범위는 모의 설비 데이터 조회이며, 실설비 연결·제어와 LLM 진단은 포함하지 않습니다.
 

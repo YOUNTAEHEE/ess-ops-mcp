@@ -32,6 +32,12 @@ Hobby는 개인 비상업적 프로젝트용입니다. 무료 한도를 초과�
 
 버스트 제한은 함수 인스턴스별 120회/분이며 전역 분산 요청 한도를 보장하지 않습니다. Vercel Firewall 및 계정 Usage 화면에서 사용량을 확인할 수 있습니다.
 
-현재 코드는 배포 준비 상태입니다. 실제 배포 URL과 원격 검증 결과는 성공 확인 후 README에 반영합니다.
+## 실제 배포와 검증 · 2026-10-11
+
+공개 대시보드: [ess-ops-mcp.vercel.app](https://ess-ops-mcp.vercel.app). MCP 주소: `https://ess-ops-mcp.vercel.app/mcp`.
+
+개인 Hobby 프로젝트에 Node.js 24 Function 하나와 싱가포르 `sin1` private Blob을 연결했습니다. 공식 MCP SDK의 Streamable HTTP 클라이언트에서 6개 도구 및 부분 장애·재시도 복구를 포함한 8회 호출을 확인했습니다. 공개 `/healthz`의 설정 상태, 인증 없는 도구 실행·기록 조회의 HTTP 401, private Blob의 8개 기록과 반복 조회 일치를 확인했습니다. 자동 테스트 15개·타입 검사·프론트엔드 빌드도 통과했습니다.
+
+배포 당일의 기능 검증 결과입니다. 장기간 가용성이나 실제 설비 운영 실적을 뜻하지 않습니다. Oracle 무료 VM은 싱가포르 리전의 용량 부족으로 별도 배포 대기 상태입니다.
 
 근거: [Hobby](https://vercel.com/docs/plans/hobby), [MCP 배포](https://vercel.com/docs/mcp/deploy-mcp-servers-to-vercel), [private Blob](https://vercel.com/docs/vercel-blob/private-storage), [Blob 무료 한도](https://vercel.com/docs/vercel-blob/usage-and-pricing).
