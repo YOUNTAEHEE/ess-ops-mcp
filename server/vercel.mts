@@ -4,7 +4,7 @@ import {toolOutcome} from '../lib/outcome.ts';
 
 export type AuditEvent={id:string;createdAt:string;tool:string;outcome:string;durationMs:number};
 export interface AuditStore {append(event:AuditEvent):Promise<void>;recent():Promise<AuditEvent[]>;}
-type Config={token:string;store:AuditStore;allowedOrigins?:string[];rateLimit?:number};
+type Config={token:string;store:AuditStore;allowedOrigins?:string[];rateLimit?:number;auditConfigured?:boolean};
 const catalog=new Set(tools.map(t=>t.name));
 
 // Counters are per function instance. Vercel Firewall provides the perimeter;
@@ -23,7 +23,7 @@ export function createVercelHandler(config:Config){
    headers.set('Access-Control-Allow-Headers','Authorization, Content-Type, Accept, MCP-Protocol-Version');
    return reply(204,null);
   }
-  if(route==='healthz'&&request.method==='GET')return reply(200,{status:'ok',service:'ess-ops-mcp',version:'1.0.0',data:'synthetic-demo',runtime:'Vercel Functions',storage:'private Vercel Blob',auditConfigured:!!config.token&&config.token.length>=32});
+  if(route==='healthz'&&request.method==='GET')return reply(200,{status:'ok',service:'ess-ops-mcp',version:'1.0.0',data:'synthetic-demo',runtime:'Vercel Functions',storage:'private Vercel Blob',mcpConfigured:config.token.length>=32,auditConfigured:config.auditConfigured??false});
   if(!['mcp','audit','demo','mcp-preview'].includes(route))return reply(404,{error:'Not found'});
   if(config.token.length<32)return reply(503,{error:'MCP credential is not configured'});
   const expected=Buffer.from(config.token),provided=Buffer.from(/^Bearer (.+)$/.exec(request.headers.get('authorization')??'')?.[1]??'');
@@ -52,7 +52,7 @@ export function createVercelHandler(config:Config){
   if(route==='demo')message={jsonrpc:'2.0',id:randomUUID(),method:'tools/call',params:{name:message.tool,arguments:message.arguments??{}}};
   const started=Date.now();const response=await rpc(message,authenticated||isPreview);
   let persisted=false;
-  if(!isPreview&&authenticated&&message?.method==='tools/call'){
+  if(!isPreview&&authenticated&&message?.method==='tools/call'&&Object.prototype.hasOwnProperty.call(message,'id')){
    const result=response.body?.result as {isError?:boolean;structuredContent?:unknown}|undefined;
    const event:AuditEvent={id:randomUUID(),createdAt:new Date().toISOString(),tool:catalog.has(message.params?.name)?message.params.name:'invalid',outcome:response.body?.error?'invalid':result?.isError?'error':toolOutcome(result?.structuredContent),durationMs:Date.now()-started};
    try{await config.store.append(event);persisted=true;}

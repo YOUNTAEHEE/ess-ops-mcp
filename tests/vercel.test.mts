@@ -17,6 +17,8 @@ test('serverless MCP authentication, partial response and persisted metadata',as
  assert.equal(store.events.length,0);
  const discovery=await handle(request('mcp',{jsonrpc:'2.0',id:1,method:'tools/list'}),'mcp');
  assert.equal((await discovery.json() as any).result.tools.length,6);
+ await handle(request('mcp',{jsonrpc:'2.0',method:'tools/call',params:message.params},true),'mcp');
+ assert.equal(store.events.length,0,'notifications must not invent executed calls');
  const response=await handle(request('mcp',message,true),'mcp');
  const result=(await response.json() as any).result.structuredContent;
  assert.equal(result.available.length,3);assert.equal(result.failures[0].data,null);
