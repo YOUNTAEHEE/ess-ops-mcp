@@ -12,7 +12,7 @@
 
 GitHub Pages는 원격 MCP 서버를 실행하지 않습니다. Oracle VM 생성·HTTPS 주소·실제 Codex 연결 검증을 마치기 전까지 원격 배포 완료로 표시하지 않습니다.
 
-2026-10-11 Singapore 홈 리전 AD-1에서 A1 Flex(1 OCPU·2 GB)와 E2.1 Micro(1 GB)를 각각 생성 요청했으며, 두 요청 모두 `Out of capacity`로 거절됐습니다. 실제 Oracle VM과 공개 MCP 주소는 아직 없습니다. 재개 설정과 검증 절차는 [Oracle 배포 안내](server/DEPLOYMENT.md)에 기록했습니다.
+2026-10-11 Singapore 홈 리전 AD-1에서 A1 Flex(1 OCPU·2 GB)와 E2.1 Micro(1 GB)를 생성 요청한 뒤, A1을 최소 1 OCPU·1 GB로 줄여 다시 요청했습니다. 세 요청 모두 `Out of capacity`로 거절됐습니다. 실제 Oracle VM과 공개 MCP 주소는 아직 없습니다. 재개 설정과 검증 절차는 [Oracle 배포 안내](server/DEPLOYMENT.md)에 기록했습니다.
 
 ## 범위
 
