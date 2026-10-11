@@ -2,11 +2,12 @@
 
 2026-10-11에 새로 만든 개인 포트폴리오 데모입니다. 설비 운영 화면 경험을 바탕으로 모의 ESS 데이터의 조회를 MCP 도구로 노출합니다. 실제 회사 코드·고객 정보·설비 데이터는 포함하지 않습니다.
 
-**[GitHub Pages 시연](https://yountaehee.github.io/ess-ops-mcp/)** · **[Oracle 배포 안내](server/DEPLOYMENT.md)**
+**[GitHub Pages 시연](https://yountaehee.github.io/ess-ops-mcp/)** · **[Vercel 배포 안내](server/VERCEL.md)** · **[Oracle 배포 안내](server/DEPLOYMENT.md)**
 
 | 구분 | 실행 위치 | 데이터와 기록 |
 | --- | --- | --- |
 | GitHub Pages | 브라우저 React 시연 | 모의 데이터, 현재 탭의 메모리 기록. 새로고침 시 초기화 |
+| Vercel용 MCP 서버 | Node.js 24 Functions / private Blob | Hobby 무료 구성, Bearer 인증, 공개 모의 HTTP 미리보기. 로컬 검증 완료, 원격 배포 준비 |
 | Oracle용 MCP 서버 | Node.js / Docker / Caddy HTTPS | Bearer 인증, SQLite 영구 기록을 로컬 검증. 가입 완료, 무료 VM 용량 부족으로 실제 배포 대기 |
 | 초기 Sites 버전 | Cloudflare Workers / D1 | 개인 접근으로 배포 검증. Oracle 배포와 구분 |
 
@@ -47,7 +48,7 @@ D1 스키마는 `db/schema.ts`, 초기 마이그레이션은 `drizzle/0000_misty
 
 ## 검증
 
-자동 테스트 11개: 핵심 도구 7개 + HTTP 서버 4개입니다. lifecycle/discovery, 인증 거절, 정상·부분 실패·복구, 중복 요청 공유, 시계열 순서·입력 범위, 알람 근거, 프로토콜 오류, HTTP 인증·Origin·본문 크기·요청 제한·SQLite 재시작 영속성을 확인합니다. 테스트·TypeScript 검사·Pages 빌드를 배포 전에 실행합니다.
+자동 테스트 15개: 핵심 도구 7개 + HTTP 서버 4개 + Vercel 함수 4개입니다. lifecycle/discovery, 인증 거절, 정상·부분 실패·복구, 중복 요청 공유, 시계열 순서·입력 범위, 알람 근거, 프로토콜 오류, HTTP 인증·Origin·본문 크기·요청 제한·SQLite 재시작 영속성을 확인합니다. Vercel 함수는 공개 미리보기와 비공개 MCP 기록의 접근 경계, 새 함수 인스턴스의 외부 저장소 조회, 저장 실패 표시를 추가 검증합니다. 테스트·TypeScript 검사·프론트엔드 빌드를 배포 전에 실행합니다.
 
 초기 Cloudflare 서버는 실제 Codex에서 조회 도구 6개 호출을 확인했습니다. Oracle용 서버는 로컬 Docker 환경에서 실행·인증·SQLite 기록 유지를 검증했습니다.
 

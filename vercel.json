@@ -1,0 +1,17 @@
+{
+ "$schema":"https://openapi.vercel.sh/vercel.json",
+ "framework":null,
+ "installCommand":"npm ci --no-audit --no-fund",
+ "buildCommand":"npm run vercel:build",
+ "outputDirectory":"pages-dist",
+ "regions":["sin1"],
+ "functions":{"api/ops.ts":{"maxDuration":15}},
+ "rewrites":[
+  {"source":"/mcp","destination":"/api/ops?route=mcp"},
+  {"source":"/healthz","destination":"/api/ops?route=healthz"},
+  {"source":"/audit","destination":"/api/ops?route=audit"},
+  {"source":"/api/demo","destination":"/api/ops?route=demo"},
+  {"source":"/api/mcp-preview","destination":"/api/ops?route=mcp-preview"}
+ ],
+ "headers":[{"source":"/(.*)","headers":[{"key":"X-Content-Type-Options","value":"nosniff"},{"key":"Referrer-Policy","value":"strict-origin-when-cross-origin"}]}]
+}
