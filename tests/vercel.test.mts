@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {createVercelHandler,type AuditEvent,type AuditStore} from '../server/vercel.mts';
+import {createVercelHandler,type AuditEvent,type AuditStore} from '../server/vercel.ts';
 
 const token='unit-test-only-credential-with-32-plus-characters';
 const message={jsonrpc:'2.0',id:1,method:'tools/call',params:{name:'get_equipment_status',arguments:{scenario:'timeout'}}};

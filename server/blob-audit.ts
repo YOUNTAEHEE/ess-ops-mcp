@@ -1,5 +1,5 @@
 import {get,list,put} from '@vercel/blob';
-import type {AuditEvent,AuditStore} from './vercel.mts';
+import type {AuditEvent,AuditStore} from './vercel.ts';
 
 export function auditPath(event:AuditEvent){
  // Reverse timestamp keys make the lexicographic first page the newest events.
